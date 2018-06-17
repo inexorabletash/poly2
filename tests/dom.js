@@ -132,12 +132,12 @@ QUnit.test("DOMTokenList / classList", function(assert) {
   elem = document.createElement('span');
   assert.equal(getClassList(elem).length, 0);
 
-  assert.equals(function() { getClassList(elem).contains(''); });
+  assert.equal(getClassList(elem).contains(''), false);
   assert.throws(function() { getClassList(elem).add(''); });
   assert.throws(function() { getClassList(elem).remove(''); });
   assert.throws(function() { getClassList(elem).toggle(''); });
 
-  assert.throws(function() { getClassList(elem).contains('a b'); });
+  assert.equal(getClassList(elem).contains('a b'), false);
   assert.throws(function() { getClassList(elem).add('a b'); });
   assert.throws(function() { getClassList(elem).remove('a b'); });
   assert.throws(function() { getClassList(elem).toggle('a b'); });

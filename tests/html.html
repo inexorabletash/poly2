@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>HTML Polyfill Unit Tests</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.1.1.css">
+<script src="https://code.jquery.com/qunit/qunit-2.1.1.js"></script>
+
+<div id="qunit"></div>
+<div id="qunit-fixture">
+
+test markup, will be hidden
+
+<div>
+  <div id="foo" class="alpha">
+    <div id="bar" class="beta">
+      <span id="baz" class="beta delta epsilon phi"></span>
+    </div>
+  </div>
+  <span id="bat" class="alpha"></span>
+</div>
+
+<div id="datadiv" data-foo="bar" data-bar="123" data-aa-bb-cc="abc">
+  <span id="dataspan" data-123="blah"></span>
+</div>
+
+<div id="sectiondiv">
+  <section id="section">
+    <span id="sectionspan">
+    </span>
+  </section>
+</div>
+
+</div>
+
+<script src="html.js"></script>
