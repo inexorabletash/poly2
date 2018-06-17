@@ -27,13 +27,13 @@ Or just include scripts directly in your page via CDN (c/o [RawGit](https://rawg
 
 ### Files ###
 
-The polyfills are roughly split up into files matching 1:1 with Web standards (specifications, living standards documents, etc). So there is [html.js](html.js) for [HTML](https://html.spec.whatwg.org), [dom.js](dom.js) for [DOM](https://dom.spec.whatwg.org), etc.
+The polyfills are roughly split up into files matching 1:1 with Web standards (specifications, living standards documents, etc). So there is [dom.js](dom.js) for [DOM](https://dom.spec.whatwg.org), etc.
 
 Since I generally use several in my hobby projects, bundled/minified versions are available:
 
 * [web.js](web.js) (minified: [web.min.js](web.min.js)) includes the most common Web polyfills - it assumes ES2015 support
-  * Includes: [html.js](html.js) [dom.js](dom.js) [xhr.js](xhr.js) [cssom.js](cssom.js) [url.js](url.js) [fetch.js](fetch.js)
-* [polyfill.js](polyfill.js) (minified: [polyfill.min.js](polyfill.min.js)) has everything in [web.js](web.js) plus [es5.js](es5.js) and [es6.js](es6.js) and [es2016.js](es2016.js) and [es2017.js](es2017.js)
+  * Includes: [dom.js](dom.js) [url.js](url.js) [fetch.js](fetch.js)
+* [polyfill.js](polyfill.js) (minified: [polyfill.min.js](polyfill.min.js)) has everything in [web.js](web.js) plus [es6.js](es6.js) and [es2016.js](es2016.js) and [es2017.js](es2017.js)
 
 Minification is done via https://github.com/mishoo/UglifyJS2
 
@@ -48,8 +48,6 @@ Minification is done via https://github.com/mishoo/UglifyJS2
 ECMAScript / JavaScript Polyfills
 ---------------------------------
 
-[ECMAScript 5](es5.md) - Previous standard, supported by browsers circa 2012..
-
 [ECMAScript 2015](es6.md) - Previous standard, supported by browsers circa 2016.
 
 [ECMAScript 2016](es2016.md) - Previous standard, supported by browsers circa 2017.
@@ -58,9 +56,6 @@ ECMAScript / JavaScript Polyfills
 
 [ECMAScript proposed](experimental/es-proposed.md) - Proposals for future editions of the standard. Here there be dragons.
 
-[JavaScript 1.X String Extras](js.js) - [ref](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String)
-  * String prototype: `trimLeft`, `trimRight`, `quote`
-
 
 HTML
 ----
@@ -68,17 +63,6 @@ HTML
 [tests](https://inexorabletash.github.io/polyfill/tests/html.html) -
 [living standard](https://html.spec.whatwg.org)
 
-* `document.head` (for IE8-)
-* 'shiv' of newer HTML elements (`section`, `aside`, etc), to fix parsing (for IE8-)
-* `dataset` and `data-*` attributes [spec](https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes) (for IE8+, not available in IE7-)
-  * `str = element.dataset[key]` - yields undefined if data-key attribute not present
-  * `element.dataset[key] = str` - fails unless data-key attribute already present
-* [Base64 utility methods](https://html.spec.whatwg.org/multipage/webappapis.html#atob) (for IE9-)
-  * `encodedString = window.btoa(binaryString)` - Base64 Encode
-  * `binaryString = window.atob(encodedString)` - Base64 Decode
-* [Animation Frames](https://html.spec.whatwg.org/multipage/webappapis.html#animation-frames) - [demo page](https://inexorabletash.github.io/polyfill/demos/raf.html)
-  * `id = window.requestAnimationFrame()`
-  * `window.cancelAnimationFrame(id)`
 
 
 DOM
@@ -87,34 +71,11 @@ DOM
 [tests](https://inexorabletash.github.io/polyfill/tests/dom.html) -
 [living standard](https://dom.spec.whatwg.org)
 
-* [Selectors](https://dom.spec.whatwg.org/#scope-match-a-selectors-string) (for IE7-) - adapted from [Paul Young](http://ajaxian.com/archives/creating-a-queryselector-for-ie-that-runs-at-native-speed)
-  * `element = document.querySelector(selector)`
-  * `elementArray = document.querySelectorAll(selector)`
-* `elem.matches(selector)` (for IE, Firefox 3.6, early Webkit and Opera 15.0)
-* `elementArray = document.getElementsByClassName(classNames)` (for IE8-)
-* `e = element.nextElementSibling`, `e = element.previousElementSibling` (for IE8)
-* Node constants: `Node.ELEMENT_NODE`, etc (for IE8-)
-* DOMException constants: `DOMException.INDEX_SIZE_ERR` (for IE8-)
-* [Events](https://dom.spec.whatwg.org/) (for IE8)
-  * Where `EventTarget` is `window`, `document`, or any element:
-    * `EventTarget.addEventListener(event, handler)` - for IE8+
-    * `EventTarget.removeEventListener(event, handler)` - for IE8+
-  * Event: `target`, `currentTarget`, `eventPhase`, `bubbles`, `cancelable`, `timeStamp`, `defaultPrevented`, `stopPropagation()`, `cancelBubble()`
-* Non-standard Event helpers for IE7- - adapted from
+* Element: `matches(selectors)` [spec](https://dom.spec.whatwg.org/#dom-element-matches), `closest(selectors)` [spec](https://dom.spec.whatwg.org/#dom-element-closest)
 * [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
-* [QuirksMode](http://www.quirksmode.org/blog/archives/2005/10/_and_the_winner_1.html)
-  * `window.addEvent(EventTarget, event, handler)`
-  * `window.removeEvent(EventTarget, event, handler)`
-* [DOMTokenList](https://dom.spec.whatwg.org/#interface-domtokenlist) - `classList`[spec](https://dom.spec.whatwg.org/#dom-element-classlist), `relList`[spec](https://html.spec.whatwg.org/multipage/semantics.html#the-link-element)
-  * DOMTokenList: `length`, `item(index)`, `contains(token)`, `add(token)`, `remove(token)`, `toggle(token)`
-  * `tokenList = elem.classList` - for IE8+
-  * `tokenList = elem.relList` - for IE8+
-  * Non-standard helpers for IE7-:
-    * `tokenList = window.getClassList(element)`
-    * `tokenList = window.getRelList(element)`
-* ParentNode: `node.prepend(nodes...)`, `node.append(nodes...)`
-* ChildNode: `node.before(nodes...)` , `node.after(nodes...)` , `node.replaceWith(nodes...)` , `node.remove()`
-
+* [DOMTokenList](https://dom.spec.whatwg.org/#interface-domtokenlist): `toggle(token, force)` [spec](https://dom.spec.whatwg.org/#dom-domtokenlist-toggle)
+* [ParentNode](https://dom.spec.whatwg.org/#interface-parentnode): `node.prepend(nodes...)`, `node.append(nodes...)`
+* [ChildNode](https://dom.spec.whatwg.org/#interface-childnode): `node.before(nodes...)` , `node.after(nodes...)` , `node.replaceWith(nodes...)` , `node.remove()`
 
 Fetch
 -----
@@ -136,22 +97,6 @@ Supported:
 * Request: `new Request(input, init)`, `method`, `headers`, `body`, `url`
 * Response: `new Response(body, init)`, `headers`, `url`, `status`, `statusText`, `body`
 * `fetch(input, init)`
-
-
-XMLHttpRequest
---------------
-[script](xhr.js) -
-[tests](https://inexorabletash.github.io/polyfill/tests/xhr.html) -
-[living standard](https://xhr.spec.whatwg.org/)
-* [`XMLHttpRequest`](https://xhr.spec.whatwg.org/#interface-xmlhttprequest) (for IE6-)
-* [`FormData`](https://xhr.spec.whatwg.org/#interface-formdata) (for IE9-)
-
-
-CSS OM
-------
-[script](cssom.js) - [spec](https://dev.w3.org/csswg/cssom-view/)
-
-Polyfill for `width` and `height` in `getBoundingClientRect()` in IE8-
 
 
 URL API
@@ -179,40 +124,16 @@ Uncommon Polyfills
 
 The following are of limited use and are *not* included in the `web.js` / `polyfill.js` bundled versions.
 
-Timing
-------
-[script](timing.js)
-
-* [Efficient Script Yielding](http://w3c.github.io/setImmediate/)
-  * `id = setImmediate(callback, args...)`
-  * `clearImmediate(id)`
-
-
 Keyboard Events
 ---------------
 [script](keyboard.js) -
 [demo page](https://inexorabletash.github.io/polyfill/demos/keyboard.html) -
-[draft spec](https://w3c.github.io/uievents/) ([also](https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm))
+[draft spec](https://w3c.github.io/uievents/)
 
-KeyboardEvent: `code`, `key`, `location`, `KeyboardEvent.queryKeyCap(code)`
-
-IE7- only: Call `window.identifyKey(keyboardEvent);` in `keydown`/`keyup` handlers before accessing above properties.
+KeyboardEvent: `code`, `key`, `location`
 
 [more details](keyboard.md)
 
-
-Geolocation API
----------------
-[script](geo.js) -
-[demo page](https://inexorabletash.github.io/polyfill/demos/geo.html) -
-[spec](http://www.w3.org/TR/geolocation-API/) -
-uses [freegeoip.net](https://freegeoip.net/)
-
-```javascript
-navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
-var watchId = navigator.geolocation.watchPosition(successCallback, errorCallback, options);
-navigator.geolocation.clearWatch(watchId);
-```
 
 Obsolete
 --------

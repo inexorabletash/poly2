@@ -3,7 +3,7 @@
 
 // Notes:
 // - Primarily useful for parsing URLs and modifying query parameters
-// - Should work in IE8+ and everything more modern, with es5.js polyfills
+// - Should work in IE8+ and everything more modern
 
 (function (global) {
   'use strict';

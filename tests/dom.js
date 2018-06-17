@@ -1,4 +1,4 @@
-/*global QUnit, getClassList, getRelList*/
+/*global QUnit*/
 QUnit.test("querySelector / getElementsByClassName", function(assert) {
   assert.expect(22);
 
@@ -68,10 +68,12 @@ QUnit.test("Enumerations", function(assert) {
   assert.equal(DOMException.INVALID_ACCESS_ERR, 15);
 });
 
-QUnit.test("Helpers - getClassList() and getRelList()", function(assert) {
-  assert.expect(59);
+QUnit.test("DOMTokenList / classList", function(assert) {
+  assert.expect(52);
 
-  // getClassList()
+  // TODO: Update assertions to use .classList directly.
+  function getClassList(elem) { return elem.classList; }
+
   assert.equal(getClassList(document.getElementById('baz')).length, 4);
   assert.notOk(getClassList(document.getElementById('baz')).contains('alpha'));
   assert.ok(getClassList(document.getElementById('baz')).contains('beta'));
@@ -130,7 +132,7 @@ QUnit.test("Helpers - getClassList() and getRelList()", function(assert) {
   elem = document.createElement('span');
   assert.equal(getClassList(elem).length, 0);
 
-  assert.throws(function() { getClassList(elem).contains(''); });
+  assert.equals(function() { getClassList(elem).contains(''); });
   assert.throws(function() { getClassList(elem).add(''); });
   assert.throws(function() { getClassList(elem).remove(''); });
   assert.throws(function() { getClassList(elem).toggle(''); });
@@ -139,22 +141,6 @@ QUnit.test("Helpers - getClassList() and getRelList()", function(assert) {
   assert.throws(function() { getClassList(elem).add('a b'); });
   assert.throws(function() { getClassList(elem).remove('a b'); });
   assert.throws(function() { getClassList(elem).toggle('a b'); });
-
-  // getRelList()
-  elem = document.createElement('link');
-  elem.setAttribute('rel', 'stylesheet');
-  assert.equal(getRelList(elem).length, 1);
-  assert.ok(getRelList(elem).contains('stylesheet'));
-  assert.notOk(getRelList(elem).contains('next'));
-  assert.notOk(getRelList(elem).contains('prev'));
-  getRelList(elem).remove('stylesheet');
-  getRelList(elem).add('next');
-  getRelList(elem).toggle('prev');
-  assert.equal(getRelList(elem).length, 2);
-  assert.notOk(getRelList(elem).contains('stylesheet'));
-  assert.ok(getRelList(elem).contains('next'));
-
-  // TODO: addEvent/removeEvent
 });
 
 QUnit.test('next/previousElementSibling', function(assert) {

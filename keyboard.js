@@ -669,14 +669,6 @@
     };
   }
 
-  function queryKeyCap(code, locale) {
-    code = String(code);
-    if (!codeTable.hasOwnProperty(code)) return 'Undefined';
-    if (locale && String(locale).toLowerCase() !== 'en-us') throw Error('Unsupported locale');
-    var keyInfo = codeTable[code];
-    return keyInfo.keyCap || keyInfo.code || 'Undefined';
-  }
-
   if ('KeyboardEvent' in global && 'defineProperty' in Object) {
     (function() {
       function define(o, p, v) {
@@ -713,22 +705,5 @@
       }});
     }());
   }
-
-  if (!('queryKeyCap' in global.KeyboardEvent))
-    global.KeyboardEvent.queryKeyCap = queryKeyCap;
-
-  // Helper for IE8-
-  global.identifyKey = function(event) {
-    if ('code' in event)
-      return;
-
-    var keyInfo = keyInfoForEvent(event);
-    event.code = keyInfo ? keyInfo.code : '';
-    event.key = (keyInfo && 'key' in keyInfo) ? keyInfo.key : 'Unidentified';
-    event.location = ('location' in event) ? event.location :
-      ('keyLocation' in event) ? event.keyLocation :
-      (keyInfo && 'location' in keyInfo) ? keyInfo.location : STANDARD;
-    event.locale = '';
-  };
 
 }(self));

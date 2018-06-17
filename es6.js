@@ -2016,8 +2016,6 @@
   // 22.2 TypedArray Objects
   // ---------------------------------------
 
-  // See typedarray.js for TypedArray polyfill
-
   ['Int8Array', 'Uint8Array', 'Uint8ClampedArray',
    'Int16Array', 'Uint16Array',
    'Int32Array', 'Uint32Array',
@@ -3072,8 +3070,6 @@
   // 24.1 ArrayBuffer Objects
   // ---------------------------------------
 
-  // See typedarray.js for TypedArray polyfill
-
   (function() {
     if (!('ArrayBuffer' in global))
       return;
@@ -3114,8 +3110,6 @@
   // ---------------------------------------
   // 24.2 DataView Objects
   // ---------------------------------------
-
-  // See typedarray.js for TypedArray polyfill
 
   (function() {
     if (!('DataView' in global))

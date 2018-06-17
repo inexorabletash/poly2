@@ -3,7 +3,6 @@
 Polyfill for the additional `KeyboardEvent` properties defined in the UI Events draft specifications:
 
 * [UI Events](https://w3c.github.io/uievents/)
-* [UI Events](https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm) (queryKeyCaps addition)
 
 Demo: https://inexorabletash.github.io/polyfill/demos/keyboard.html
 
@@ -16,24 +15,12 @@ KeyboardEvent instances:
 * `event.key` - (string) printed representation of the key, or control key identifier - [key values](https://w3c.github.io/uievents-key/)
 * `event.location` - (number) location of key (0 = standard, 1 = left, 2 = right, 3 = numpad)
 
-It also adds a static method:
-
-* `KeyboardEvent.queryKeyCap(code)` - yields a human readable label for the key
-
-As a helper for IE8-, it also a non-standard function to the global namespace:
-
-* `identifyKey(keyboardEvent)`
-
-The keyboardEvent argument should be a keyup/keydown DOM event. After
-calling this, the event will be populated with `code`, `key` and `location`
-properties.
 
 ## Example
 
 ```js
 // Applications that need logical key should use `key`:
 div.onkeydown = function(e) {
-  identifyKey(e); // for IE8-
   switch (e.key) {
     case 'ArrowLeft': map.scroll(-10, 0); break;
     case 'ArrowRight': map.scroll(10, 0); break;
@@ -44,7 +31,6 @@ div.onkeydown = function(e) {
 
 // Applications that need physical keys should use `code`:
 div.onkeydown = function(e) {
-  identifyKey(e); // for IE8-
   switch (e.code) {
     case 'KeyW': character.moveForward(); break;
     case 'KeyA': character.moveLeft(); break;
@@ -156,10 +142,6 @@ implementation of these earlier properties.
 
 Another [UI Events](https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm)
 draft specification proposes a new method on `KeyboardEvent`:
-
-```idl
-  static DOMString queryKeyCap (DOMString code, optional DOMString locale);
-```
 
 For cross-browser legacy mappings, see:
 

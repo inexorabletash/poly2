@@ -64,30 +64,3 @@ function stricterEqual(actual, expected, message) {
     strictEqual(actual, expected, message);
   }
 }
-
-// Compare Typed Array with JavaScript array
-function arrayEqual(typed_array, test) {
-  var array = [], i, length = typed_array.length;
-  for (i = 0; i < length; i += 1) {
-    array[i] = typed_array.get(i); // See shim below
-  }
-  deepEqual(array, test, JSON.stringify(array) + " == " + JSON.stringify(test) + " ?");
-}
-
-var array_types = ['Int8Array', 'Uint8Array', 'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'Float32Array', 'Float64Array'];
-array_types.forEach(function(typeName) {
-  if (typeName in self) {
-    var type = self[typeName];
-    // Add a TypedArray.get(index) accessor if not present, for
-    // testing native implementations.
-    if (typeof type.prototype.get !== 'function') {
-      type.prototype.get = function(idx) {
-        return this[idx];
-      };
-    }
-    // Shim to work with older impls that use "slice" instead of "subarray"
-    if (typeof type.prototype.subarray !== 'function') {
-      type.prototype.subarray = type.prototype.slice;
-    }
-  }
-});

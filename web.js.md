@@ -16,8 +16,6 @@ This bundles shims for:
 * DOM             [script](dom.js)    - [living standard](https://dom.spec.whatwg.org)
 * Fetch           [script](fetch.js)  - [living standard](https://fetch.spec.whatwg.org)
 * URL             [script](url.js)    - [living standard](https://url.spec.whatwg.org)
-* XMLHttpRequest  [script](xhr.js)    - [living standard](https://xhr.spec.whatwg.org)
 * CSSOM           [script](cssom.js)  -  [spec](https://dev.w3.org/csswg/cssom-view/)
-* Timing          [script](timing.js)
 
 web.min.js is a minimized version, c/o http://javascript-minifier.com

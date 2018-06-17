@@ -56,14 +56,6 @@ function show(selector, e) {
         },
 
         {
-          category: 'UI Events (extension)',
-          link: 'https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm',
-          attributes: {
-            'queryKeyCap()': KeyboardEvent.queryKeyCap(e.code)
-          }
-        },
-
-        {
           category: 'Legacy user agents',
           attributes: {
             charCode: hex(e.charCode),
@@ -110,7 +102,6 @@ function show(selector, e) {
 }
 
 target.addEventListener('keydown', function(e) {
-  identifyKey(e); // for IE8-
   lastKey = e.keyCode;
 
   show('#eventdata', e);
@@ -125,7 +116,6 @@ target.addEventListener('keydown', function(e) {
 });
 
 target.addEventListener('keyup', function (e) {
-  identifyKey(e); // for IE8-
   if (lastKey == e.keyCode) { lastKey = -1; }
 
   show('#eventdata', e);
