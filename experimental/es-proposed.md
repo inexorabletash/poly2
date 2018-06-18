@@ -5,18 +5,18 @@ Per https://github.com/tc39/ecma262
 [script](es-proposed.js) -
 [unit tests](https://inexorabletash.github.io/polyfill/experimental/tests/es-proposed.html)
 
+
 #### Stage 3
 
-See also:
-
 * `global` [ref](https://github.com/tc39/proposal-global)
-* Promise prototype: `finally()` [ref](https://github.com/tc39/proposal-promise-finally)
-* Array prototype: `flatten()` and `flatMap()` [ref](https://tc39.github.io/proposal-flatMap/)
+* Array prototype: `flat()` and `flatMap()` [ref](https://tc39.github.io/proposal-flatMap/)
+* String prototype: `trimStart()`, `trimEnd()` (and `trimLeft()`, `trimRight()` aliases) [ref](https://github.com/sebmarkbage/ecmascript-string-left-right-trim)
+* String.prototype: `matchAll()` [ref](https://github.com/ljharb/String.prototype.matchAll)
 
 #### Stage 2
 
-* String prototype: `trimStart()`, `trimEnd()` (and `trimLeft()`, `trimRight()` aliases) [ref](https://github.com/sebmarkbage/ecmascript-string-left-right-trim)
-* String.prototype: `matchAll()` [ref](https://github.com/ljharb/String.prototype.matchAll)
+* TODO: Object `fromEntries()` [ref](https://github.com/bakkot/object-from-entries)
+* TODO: Set prototype: `union()`, `intersect()`, `difference()`, `symmetricDifference()` [ref](https://github.com/tc39/proposal-set-methods)
 
 #### Stage 1
 
@@ -38,11 +38,3 @@ See also:
 See also:
 
 * [Int64](https://github.com/inexorabletash/int64)
-
-#### Obsolete/Abandoned Proposals
-
-* Number: `compare()`
-* Array prototype: `pushAll()`
-* Reflection: `Object.getPropertyDescriptor(o)`, `Object.getPropertyNames(o)`
-* Math: `denormz()`, `fdenormz()`
-* 64-bit Math: `imulh()`, `umulh()`, `iaddh()`, `isubh()` [ref](https://gist.github.com/BrendanEich/4294d5c212a6d2254703)

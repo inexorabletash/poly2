@@ -1,40 +1,10 @@
-/*global QUnit*/
-QUnit.test("querySelector / getElementsByClassName", function(assert) {
-  assert.expect(22);
+/*global QUnit,CustomEvent*/
 
-  // document.querySelector()
-  assert.equal(document.querySelector('#foof'), null);
-  assert.notEqual(document.querySelector('#foo'), null);
-  assert.equal(document.querySelector('.gamma'), null);
-  assert.notEqual(document.querySelector('.alpha'), null);
-  assert.notEqual(document.querySelector('.alpha'), null);
-  assert.notEqual(document.querySelector('#foo.alpha'), null);
-  assert.equal(document.querySelector('#bar.alpha'), null);
+// ----------------------------------------------------------------------
 
-  // document.querySelectorAll()
-  assert.equal(document.querySelectorAll('#foo').length, 1);
-  assert.equal(document.querySelectorAll('#bar').length, 1);
-  assert.equal(document.querySelectorAll('#baz').length, 1);
-  assert.equal(document.querySelectorAll('#bat').length, 1);
-  assert.equal(document.querySelectorAll('#qux').length, 0);
-  assert.equal(document.querySelectorAll('.alpha').length, 2);
-  assert.equal(document.querySelectorAll('.beta').length, 2);
-  assert.equal(document.querySelectorAll('.gamma').length, 0);
-  assert.equal(document.querySelectorAll('div.alpha').length, 1);
-  assert.equal(document.querySelectorAll('div.beta').length, 1);
-  assert.equal(document.querySelectorAll('span.alpha').length, 1);
-  assert.equal(document.querySelectorAll('span.beta').length, 1);
+QUnit.test("Node constants", function(assert) {
+  assert.expect(13);
 
-  // document.getElementsByClassName()
-  assert.equal(document.getElementsByClassName('alpha').length, 2);
-  assert.equal(document.getElementsByClassName('beta').length, 2);
-  assert.equal(document.getElementsByClassName('gamma').length, 0);
-});
-
-QUnit.test("Enumerations", function(assert) {
-  assert.expect(29);
-
-  // Node enumeration
   assert.notEqual(Node, null);
   assert.equal(Node.ELEMENT_NODE, 1);
   assert.equal(Node.ATTRIBUTE_NODE, 2);
@@ -48,8 +18,11 @@ QUnit.test("Enumerations", function(assert) {
   assert.equal(Node.DOCUMENT_TYPE_NODE, 10);
   assert.equal(Node.DOCUMENT_FRAGMENT_NODE, 11);
   assert.equal(Node.NOTATION_NODE, 12);
+});
 
-  // DOMException enumeration
+QUnit.test("DOMException constants (WebIDL)", function(assert) {
+  assert.expect(16);
+
   assert.notEqual(DOMException, null);
   assert.equal(DOMException.INDEX_SIZE_ERR, 1);
   assert.equal(DOMException.DOMSTRING_SIZE_ERR, 2);
@@ -68,7 +41,11 @@ QUnit.test("Enumerations", function(assert) {
   assert.equal(DOMException.INVALID_ACCESS_ERR, 15);
 });
 
-QUnit.test("DOMTokenList / classList", function(assert) {
+// ----------------------------------------------------------------------
+
+QUnit.module('DOMTokenList');
+
+QUnit.test("classList", function(assert) {
   assert.expect(52);
 
   // TODO: Update assertions to use .classList directly.
@@ -143,6 +120,10 @@ QUnit.test("DOMTokenList / classList", function(assert) {
   assert.throws(function() { getClassList(elem).toggle('a b'); });
 });
 
+// ----------------------------------------------------------------------
+
+QUnit.module('NonDocumentTypeChildNode');
+
 QUnit.test('next/previousElementSibling', function(assert) {
   assert.expect(6);
 
@@ -154,6 +135,10 @@ QUnit.test('next/previousElementSibling', function(assert) {
   assert.equal(document.querySelector('#two').nextElementSibling, document.querySelector('#three'));
   assert.equal(document.querySelector('#three').nextElementSibling, null);
 });
+
+// ----------------------------------------------------------------------
+
+QUnit.module('Element');
 
 QUnit.test("matches", function(assert) {
   assert.ok(document.querySelector('#foo').matches('.alpha'));
@@ -167,7 +152,43 @@ QUnit.test("closest", function(assert) {
   assert.notOk(document.querySelector('#baz').closest('#bat'));
 });
 
-QUnit.test('Mixin ParentNode: prepend()', function(assert) {
+// ----------------------------------------------------------------------
+
+QUnit.module('Mixin ParentNode');
+
+QUnit.test("querySelector / getElementsByClassName", function(assert) {
+  assert.expect(22);
+
+  // document.querySelector()
+  assert.equal(document.querySelector('#foof'), null);
+  assert.notEqual(document.querySelector('#foo'), null);
+  assert.equal(document.querySelector('.gamma'), null);
+  assert.notEqual(document.querySelector('.alpha'), null);
+  assert.notEqual(document.querySelector('.alpha'), null);
+  assert.notEqual(document.querySelector('#foo.alpha'), null);
+  assert.equal(document.querySelector('#bar.alpha'), null);
+
+  // document.querySelectorAll()
+  assert.equal(document.querySelectorAll('#foo').length, 1);
+  assert.equal(document.querySelectorAll('#bar').length, 1);
+  assert.equal(document.querySelectorAll('#baz').length, 1);
+  assert.equal(document.querySelectorAll('#bat').length, 1);
+  assert.equal(document.querySelectorAll('#qux').length, 0);
+  assert.equal(document.querySelectorAll('.alpha').length, 2);
+  assert.equal(document.querySelectorAll('.beta').length, 2);
+  assert.equal(document.querySelectorAll('.gamma').length, 0);
+  assert.equal(document.querySelectorAll('div.alpha').length, 1);
+  assert.equal(document.querySelectorAll('div.beta').length, 1);
+  assert.equal(document.querySelectorAll('span.alpha').length, 1);
+  assert.equal(document.querySelectorAll('span.beta').length, 1);
+
+  // document.getElementsByClassName()
+  assert.equal(document.getElementsByClassName('alpha').length, 2);
+  assert.equal(document.getElementsByClassName('beta').length, 2);
+  assert.equal(document.getElementsByClassName('gamma').length, 0);
+});
+
+QUnit.test('prepend()', function(assert) {
   var elem = document.querySelector('#mixin-parentnode');
   var orig = elem.innerHTML;
 
@@ -200,7 +221,7 @@ QUnit.test('Mixin ParentNode: prepend()', function(assert) {
   elem.innerHTML = orig;
 });
 
-QUnit.test('Mixin ParentNode: append()', function(assert) {
+QUnit.test('append()', function(assert) {
   var elem = document.querySelector('#mixin-parentnode');
   var orig = elem.innerHTML;
 
@@ -233,98 +254,7 @@ QUnit.test('Mixin ParentNode: append()', function(assert) {
   elem.innerHTML = orig;
 });
 
-QUnit.test('Mixin ChildNode: before()', function(assert) {
-  var parent = document.querySelector('#mixin-childnode');
-  var orig = parent.innerHTML;
-  var child = document.querySelector('#mixin-childnode *');
-
-  assert.equal(parent.childNodes.length, 1);
-  child.before(document.createElement('span'));
-  assert.equal(parent.childNodes.length, 2);
-  assert.equal(parent.childNodes[1], child);
-
-  child.before('t1', document.createElement('span'), 't2');
-  assert.equal(parent.childNodes.length, 5);
-  assert.equal(parent.childNodes[0].nodeType, Node.ELEMENT_NODE);
-  assert.equal(parent.childNodes[1].nodeType, Node.TEXT_NODE);
-  assert.equal(parent.childNodes[1].textContent, 't1');
-  assert.equal(parent.childNodes[2].nodeType, Node.ELEMENT_NODE);
-  assert.equal(parent.childNodes[3].nodeType, Node.TEXT_NODE);
-  assert.equal(parent.childNodes[3].textContent, 't2');
-  assert.equal(parent.childNodes[4].nodeType, Node.ELEMENT_NODE);
-  assert.equal(parent.childNodes[4], child);
-
-  parent.innerHTML = orig;
-});
-
-QUnit.test('Mixin ChildNode: after()', function(assert) {
-  var parent = document.querySelector('#mixin-childnode');
-  var orig = parent.innerHTML;
-  var child = document.querySelector('#mixin-childnode *');
-
-  assert.equal(parent.childNodes.length, 1);
-  child.after(document.createElement('span'));
-  assert.equal(parent.childNodes.length, 2);
-  assert.equal(parent.childNodes[0], child);
-
-  child.after('t1', document.createElement('span'), 't2');
-  assert.equal(parent.childNodes.length, 5);
-  assert.equal(parent.childNodes[0].nodeType, Node.ELEMENT_NODE);
-  assert.equal(parent.childNodes[0], child);
-  assert.equal(parent.childNodes[1].nodeType, Node.TEXT_NODE);
-  assert.equal(parent.childNodes[1].textContent, 't1');
-  assert.equal(parent.childNodes[2].nodeType, Node.ELEMENT_NODE);
-  assert.equal(parent.childNodes[3].nodeType, Node.TEXT_NODE);
-  assert.equal(parent.childNodes[3].textContent, 't2');
-  assert.equal(parent.childNodes[4].nodeType, Node.ELEMENT_NODE);
-
-  parent.innerHTML = orig;
-});
-
-QUnit.test('Mixin ChildNode: replaceWith()', function(assert) {
-  var parent = document.querySelector('#mixin-childnode');
-  var orig = parent.innerHTML;
-  var child = document.querySelector('#mixin-childnode *');
-
-  assert.equal(parent.childNodes.length, 1);
-  assert.equal(parent.childNodes[0], child);
-  child.replaceWith(document.createElement('span'));
-  assert.equal(parent.childNodes.length, 1);
-  assert.notEqual(parent.childNodes[0], child);
-  assert.equal(child.parentNode, null);
-
-  parent.innerHTML = orig;
-  child = document.querySelector('#mixin-childnode *');
-
-  assert.equal(parent.childNodes.length, 1);
-  assert.equal(parent.childNodes[0], child);
-  child.replaceWith('t1', document.createElement('span'), 't2');
-  assert.equal(parent.childNodes.length, 3);
-  assert.equal(parent.childNodes[0].nodeType, Node.TEXT_NODE);
-  assert.equal(parent.childNodes[0].textContent, 't1');
-  assert.equal(parent.childNodes[1].nodeType, Node.ELEMENT_NODE);
-  assert.equal(parent.childNodes[2].nodeType, Node.TEXT_NODE);
-  assert.equal(parent.childNodes[2].textContent, 't2');
-  assert.equal(child.parentNode, null);
-
-  parent.innerHTML = orig;
-});
-
-QUnit.test('Mixin ChildNode: remove()', function(assert) {
-  var parent = document.querySelector('#mixin-childnode');
-  var orig = parent.innerHTML;
-  var child = document.querySelector('#mixin-childnode *');
-
-  assert.equal(parent.childNodes.length, 1);
-  assert.equal(parent.childNodes[0], child);
-  child.remove(document.createElement('span'));
-  assert.equal(parent.childNodes.length, 0);
-  assert.equal(child.parentNode, null);
-
-  parent.innerHTML = orig;
-});
-
-QUnit.test('Mixin ParentNode: More prepend(), append()', function(assert) {
+QUnit.test('More prepend(), append()', function(assert) {
   var div = document.createElement('div');
   assert.equal(div.textContent, '', 'div should start empty');
 
@@ -354,7 +284,103 @@ QUnit.test('Mixin ParentNode: More prepend(), append()', function(assert) {
   assert.equal(div.textContent, '1abcdef2', 'replaceWith() should replace target with two nodes');
 });
 
-QUnit.test('Mixin ChildNode: More before(), after()', function(assert) {
+// ----------------------------------------------------------------------
+
+QUnit.module('Mixin ChildNode');
+
+QUnit.test('before()', function(assert) {
+  var parent = document.querySelector('#mixin-childnode');
+  var orig = parent.innerHTML;
+  var child = document.querySelector('#mixin-childnode *');
+
+  assert.equal(parent.childNodes.length, 1);
+  child.before(document.createElement('span'));
+  assert.equal(parent.childNodes.length, 2);
+  assert.equal(parent.childNodes[1], child);
+
+  child.before('t1', document.createElement('span'), 't2');
+  assert.equal(parent.childNodes.length, 5);
+  assert.equal(parent.childNodes[0].nodeType, Node.ELEMENT_NODE);
+  assert.equal(parent.childNodes[1].nodeType, Node.TEXT_NODE);
+  assert.equal(parent.childNodes[1].textContent, 't1');
+  assert.equal(parent.childNodes[2].nodeType, Node.ELEMENT_NODE);
+  assert.equal(parent.childNodes[3].nodeType, Node.TEXT_NODE);
+  assert.equal(parent.childNodes[3].textContent, 't2');
+  assert.equal(parent.childNodes[4].nodeType, Node.ELEMENT_NODE);
+  assert.equal(parent.childNodes[4], child);
+
+  parent.innerHTML = orig;
+});
+
+QUnit.test('after()', function(assert) {
+  var parent = document.querySelector('#mixin-childnode');
+  var orig = parent.innerHTML;
+  var child = document.querySelector('#mixin-childnode *');
+
+  assert.equal(parent.childNodes.length, 1);
+  child.after(document.createElement('span'));
+  assert.equal(parent.childNodes.length, 2);
+  assert.equal(parent.childNodes[0], child);
+
+  child.after('t1', document.createElement('span'), 't2');
+  assert.equal(parent.childNodes.length, 5);
+  assert.equal(parent.childNodes[0].nodeType, Node.ELEMENT_NODE);
+  assert.equal(parent.childNodes[0], child);
+  assert.equal(parent.childNodes[1].nodeType, Node.TEXT_NODE);
+  assert.equal(parent.childNodes[1].textContent, 't1');
+  assert.equal(parent.childNodes[2].nodeType, Node.ELEMENT_NODE);
+  assert.equal(parent.childNodes[3].nodeType, Node.TEXT_NODE);
+  assert.equal(parent.childNodes[3].textContent, 't2');
+  assert.equal(parent.childNodes[4].nodeType, Node.ELEMENT_NODE);
+
+  parent.innerHTML = orig;
+});
+
+QUnit.test('replaceWith()', function(assert) {
+  var parent = document.querySelector('#mixin-childnode');
+  var orig = parent.innerHTML;
+  var child = document.querySelector('#mixin-childnode *');
+
+  assert.equal(parent.childNodes.length, 1);
+  assert.equal(parent.childNodes[0], child);
+  child.replaceWith(document.createElement('span'));
+  assert.equal(parent.childNodes.length, 1);
+  assert.notEqual(parent.childNodes[0], child);
+  assert.equal(child.parentNode, null);
+
+  parent.innerHTML = orig;
+  child = document.querySelector('#mixin-childnode *');
+
+  assert.equal(parent.childNodes.length, 1);
+  assert.equal(parent.childNodes[0], child);
+  child.replaceWith('t1', document.createElement('span'), 't2');
+  assert.equal(parent.childNodes.length, 3);
+  assert.equal(parent.childNodes[0].nodeType, Node.TEXT_NODE);
+  assert.equal(parent.childNodes[0].textContent, 't1');
+  assert.equal(parent.childNodes[1].nodeType, Node.ELEMENT_NODE);
+  assert.equal(parent.childNodes[2].nodeType, Node.TEXT_NODE);
+  assert.equal(parent.childNodes[2].textContent, 't2');
+  assert.equal(child.parentNode, null);
+
+  parent.innerHTML = orig;
+});
+
+QUnit.test('remove()', function(assert) {
+  var parent = document.querySelector('#mixin-childnode');
+  var orig = parent.innerHTML;
+  var child = document.querySelector('#mixin-childnode *');
+
+  assert.equal(parent.childNodes.length, 1);
+  assert.equal(parent.childNodes[0], child);
+  child.remove(document.createElement('span'));
+  assert.equal(parent.childNodes.length, 0);
+  assert.equal(child.parentNode, null);
+
+  parent.innerHTML = orig;
+});
+
+
+QUnit.test('More before(), after()', function(assert) {
   var div = document.createElement('div');
   var span = document.createElement('span');
   span.append('s');
@@ -369,7 +395,7 @@ QUnit.test('Mixin ChildNode: More before(), after()', function(assert) {
   assert.equal(div.textContent, '34s21', 'before() should work on not first child');
 });
 
-QUnit.test('Mixin ChildNode: More remove()', function(assert) {
+QUnit.test('More remove()', function(assert) {
   var div = document.createElement('div');
   var span = document.createElement('span');
   span.append('s');
@@ -391,7 +417,7 @@ QUnit.test('Mixin ChildNode: More remove()', function(assert) {
   assert.equal(div.textContent, 'ab', 'remove() should remove child if last');
 });
 
-QUnit.test('Mixin ChildNode: remove() - Behavior when no parent node', function(assert) {
+QUnit.test('remove() - Behavior when no parent node', function(assert) {
   var div = document.createElement('div');
   var span = document.createElement('span');
   assert.equal(div.parentNode, null);
@@ -409,7 +435,7 @@ QUnit.test('Mixin ChildNode: remove() - Behavior when no parent node', function(
   div.remove(); // Shouldn't throw
 });
 
-QUnit.test('Mixin ChildNode: prepend, append, replaceWith - Behavior with no arguments', function(assert) {
+QUnit.test('prepend, append, replaceWith - Behavior with no arguments', function(assert) {
   var div = document.createElement('div');
   var span = document.createElement('span');
   div.prepend();
@@ -425,7 +451,7 @@ QUnit.test('Mixin ChildNode: prepend, append, replaceWith - Behavior with no arg
   assert.equal(span.parentNode, null);
 });
 
-QUnit.test('Mixin ChildNode: before, after, replaceWith - Behavior when nodes contains context node or siblings', function(assert) {
+QUnit.test('before, after, replaceWith - Behavior when nodes contains context node or siblings', function(assert) {
   function span(t) {
     var s = document.createElement('span');
     s.append(t);
@@ -463,7 +489,11 @@ QUnit.test('Mixin ChildNode: before, after, replaceWith - Behavior when nodes co
   assert.equal(div.textContent, '1432', 'after should work when successor is removed');
 });
 
-QUnit.test('CustomEvent: addEventListener and dispatchEvent', function(assert) {
+// ----------------------------------------------------------------------
+
+QUnit.module('CustomEvent');
+
+QUnit.test('addEventListener and dispatchEvent', function(assert) {
   var done = assert.async();
   var div = document.getElementById('customev');
   div.addEventListener('customevent', function(e) {

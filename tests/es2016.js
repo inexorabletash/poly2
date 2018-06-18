@@ -1,4 +1,7 @@
 /*global QUnit*/
+
+QUnit.module("ES2016: Array");
+
 QUnit.test('Array.prototype.includes', function(assert) {
   assert.ok('includes' in Array.prototype);
   assert.equal(typeof Array.prototype.includes, 'function');

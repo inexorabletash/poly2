@@ -142,7 +142,6 @@
   //
   //----------------------------------------------------------------------
 
-
   //----------------------------------------------------------------------
   // Stage 3
   //----------------------------------------------------------------------
@@ -156,17 +155,6 @@
       writable: true
     });
   }
-
-  // https://github.com/tc39/proposal-promise-finally
-  define(
-    Promise.prototype, 'finally',
-    function finally_(func) {
-      return this.then(
-        function(r) { func(); return r; },
-        function(r) { func(); throw r; }
-      );
-    });
-
 
   // https://tc39.github.io/proposal-flatMap/
   define(
@@ -186,8 +174,8 @@
 
   // https://tc39.github.io/proposal-flatMap/
   define(
-    Array.prototype, 'flatten',
-    function flatten() {
+    Array.prototype, 'flat',
+    function flat() {
       var depth = arguments[0];
 
       var o = ToObject(strict(this));
@@ -234,10 +222,6 @@
 
     return targetIndex;
   }
-
-  //----------------------------------------------------------------------
-  // Stage 2
-  //----------------------------------------------------------------------
 
   // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
   define(
@@ -303,6 +287,10 @@
 
   define($RegExpStringIteratorPrototype$, Symbol.iterator, function() { return this; });
   define($RegExpStringIteratorPrototype$, Symbol.toStringTag, 'RegExp String Iterator');
+
+  //----------------------------------------------------------------------
+  // Stage 2
+  //----------------------------------------------------------------------
 
   //----------------------------------------------------------------------
   // Stage 1
@@ -466,139 +454,6 @@
       var second = s.charAt(position + 1);
       var cp = (first - 0xD800) * 0x400 + (second - 0xDC00) + 0x10000;
       return String.fromCharCode(cuFirst, cuSecond);
-    });
-
-
-  //----------------------------------------------------------------------
-  // Obsolete/Abandoned
-  //----------------------------------------------------------------------
-
-  // http://wiki.ecmascript.org/doku.php?id=strawman:number_compare
-  define(
-    Number, 'compare',
-    function compare(first, second, tolerance) {
-      var difference = first - second;
-      return abs(difference) <= (tolerance || 0) ? 0 : difference < 0 ? -1 : 1;
-    });
-
-  // http://wiki.ecmascript.org/doku.php?id=harmony:extended_object_api
-  define(
-    Object, 'getPropertyDescriptor',
-    function getPropertyDescriptor(o, p) {
-      do {
-        var desc = Object.getOwnPropertyDescriptor(o, p);
-        if (desc) {
-          return desc;
-        }
-        o = Object.getPrototypeOf(o);
-      } while (o);
-      return undefined;
-    });
-
-  // http://wiki.ecmascript.org/doku.php?id=harmony:extended_object_api
-  define(
-    Object, 'getPropertyNames',
-    function getPropertyNames(o) {
-      var names = ObjectCreate(null);
-      do {
-        Object.getOwnPropertyNames(o).forEach(function(name) {
-          names[name] = true;
-        });
-        o = Object.getPrototypeOf(o);
-      } while (o);
-      return Object.keys(names);
-    });
-
-  // http://wiki.ecmascript.org/doku.php?id=strawman:array.prototype.pushall
-  define(
-    Array.prototype, 'pushAll',
-    function pushAll(other, start, end) {
-      other = ToObject(other);
-      if (start === undefined) {
-        start = 0;
-      }
-      start = ToUint32(start);
-      var otherLength = ToUint32(other.length);
-      if (end === undefined) {
-        end = otherLength;
-      }
-      end = ToUint32(end);
-      var self = ToObject(this);
-      var length = ToUint32(self.length);
-      for (var i = 0, j = length; i < end; i++, j++) {
-        self[j] = other[i];
-      }
-      self.length = j;
-      return;
-    });
-
-  var MIN_NORMALIZED_F32 = Math.pow(2,-126);
-  var MIN_NORMALIZED_F64 = Math.pow(2,-1022);
-
-  define(
-    Math, 'denormz',
-    function denormz(x) {
-      if (x > 0 && x < MIN_NORMALIZED_F64) return 0;
-      if (x < 0 && x > -MIN_NORMALIZED_F64) return -0;
-      return x;
-    });
-
-  define(
-    Math, 'fdenormz',
-    function fdenormz(x) {
-      if (x > 0 && x < MIN_NORMALIZED_F32) return 0;
-      if (x < 0 && x > -MIN_NORMALIZED_F32) return -0;
-      return x;
-    });
-
-  // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
-
-  // Inspired by Hacker's Delight - http://hackersdelight.org
-
-  define(
-    Math, 'imulh',
-    function imulh(u, v) {
-      var u0 = u & 0xFFFF, u1 = u >> 16;
-      var v0 = v & 0xFFFF, v1 = v >> 16;
-      var w0 = u0 * v0;
-      var t = ((u1 * v0) >>> 0) + (w0 >>> 16);
-      var w1 = t & 0xFFFF;
-      var w2 = t >> 16;
-      w1 = ((u0 * v1) >>> 0) + w1;
-      return u1 * v1 + w2 + (w1 >> 16);
-    });
-
-  define(
-    Math, 'umulh',
-    function umulh(u, v) {
-      var u0 = u & 0xFFFF, u1 = u >>> 16;
-      var v0 = v & 0xFFFF, v1 = v >>> 16;
-      var w0 = u0 * v0;
-      var t = ((u1 * v0) >>> 0) + (w0 >>> 16);
-      var w1 = t & 0xFFFF;
-      var w2 = t >>> 16;
-      w1 = ((u0 * v1) >>> 0) + w1;
-      return u1 * v1 + w2 + (w1 >>> 16);
-    });
-
-  define(
-    Math, 'iaddh',
-    function iaddh(x0, x1, y0, y1) {
-      x0 = x0 >>> 0; x1 = x1 >>> 0; y0 = y0 >>> 0; y1 = y1 >>> 0;
-      var z0 = (x0 + y0) >>> 0;
-      var c = ((x0 & y0) | (x0 | y0) & ~z0) >>> 31;
-      var z1 = x1 + y1 + c;
-      return z1 | 0;
-    });
-
-  define(
-    Math, 'isubh',
-    function isubh(x0, x1, y0, y1) {
-      x0 = x0 >>> 0; x1 = x1 >>> 0; y0 = y0 >>> 0; y1 = y1 >>> 0;
-      var z0 = (x0 - y0) >>> 0;
-      var b = ((~x0 & y0) | (~(x0 ^ y0) & z0)) >>> 31;
-      var z1 = x1 - y1 - b;
-      return z1 | 0;
     });
 
 }(this));

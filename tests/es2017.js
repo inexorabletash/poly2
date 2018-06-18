@@ -1,6 +1,6 @@
 /*global QUnit,global*/
 
-QUnit.module("Object Objects");
+QUnit.module("ES2017: Object Objects");
 
 QUnit.test("Object.values/entries", function(assert) {
   var d = Object.create(null);
@@ -42,7 +42,7 @@ QUnit.test("Object.getOwnPropertyDescriptors", function(assert) {
              });
 });
 
-QUnit.module("String Objects");
+QUnit.module("ES2017: String Objects");
 
 QUnit.test("String padEnd", function(assert) {
   assert.equal('a'.padEnd(), 'a');

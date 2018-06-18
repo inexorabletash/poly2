@@ -2,50 +2,12 @@
 
 // ------------------------------------------------------------
 
+// ------------------------------------------------------------
+
 QUnit.module("Stage 3");
 
 QUnit.test("global", function(assert) {
   assert.equal(global, Function('return this')());
-});
-
-QUnit.test('Promise.prototype.finally', function(assert) {
-  assert.ok('finally' in Promise.prototype);
-  assert.equal(typeof Promise.prototype.finally, 'function');
-  assert.equal(Promise.prototype.finally.length, 1);
-
-  function async(f) {
-    var done = assert.async();
-    f(done);
-  }
-
-  async(function(done) {
-    Promise.resolve().finally(function() {
-      assert.equal(arguments.length, 0, 'Finally callback gets no args - resolved promise');
-      done();
-    });
-  });
-
-  async(function(done) {
-    Promise.reject().finally(function() {
-      assert.equal(arguments.length, 0, 'Finally callback gets no args - rejected promise');
-      done();
-    }).catch(function() {});
-  });
-
-  async(function(done) {
-    Promise.resolve(2).finally(function() {}).then(function(r) {
-      assert.equal(r, 2, 'Finally passes resolution through promise chain');
-      done();
-    });
-  });
-
-  async(function(done) {
-    Promise.reject(3).finally(function() {}).catch(function(r) {
-      assert.equal(r, 3, 'Finally passes rejection through promise chain');
-      done();
-    });
-  });
-
 });
 
 QUnit.test('Array.prototype.flatMap', function(assert) {
@@ -53,18 +15,14 @@ QUnit.test('Array.prototype.flatMap', function(assert) {
                    ['a', 'b', 'c', 'd', 'e', 'f']);
 });
 
-QUnit.test('Array.prototype.flatten', function(assert) {
-  assert.deepEqual([[1,2,3], [4,5,6]].flatten(), [1,2,3,4,5,6]);
-  assert.deepEqual([[1,[2,[3]]]].flatten(), [1,[2,[3]]]);
-  assert.deepEqual([[1,[2,[3]]]].flatten(0), [[1,[2,[3]]]]);
-  assert.deepEqual([[1,[2,[3]]]].flatten(1), [1,[2,[3]]]);
-  assert.deepEqual([[1,[2,[3]]]].flatten(2), [1,2,[3]]);
-  assert.deepEqual([[1,[2,[3]]]].flatten(3), [1,2,3]);
+QUnit.test('Array.prototype.flat', function(assert) {
+  assert.deepEqual([[1,2,3], [4,5,6]].flat(), [1,2,3,4,5,6]);
+  assert.deepEqual([[1,[2,[3]]]].flat(), [1,[2,[3]]]);
+  assert.deepEqual([[1,[2,[3]]]].flat(0), [[1,[2,[3]]]]);
+  assert.deepEqual([[1,[2,[3]]]].flat(1), [1,[2,[3]]]);
+  assert.deepEqual([[1,[2,[3]]]].flat(2), [1,2,[3]]);
+  assert.deepEqual([[1,[2,[3]]]].flat(3), [1,2,3]);
 });
-
-// ------------------------------------------------------------
-
-QUnit.module("Stage 2");
 
 QUnit.test("String trimStart/trimEnd and aliases", function(assert) {
 
@@ -112,6 +70,10 @@ QUnit.test("String matchAll", function(assert) {
 
   assert.throws(function() { 'abc'.matchAll({}); }, TypeError);
 });
+
+// ------------------------------------------------------------
+
+QUnit.module("Stage 2");
 
 
 // ------------------------------------------------------------
@@ -277,62 +239,4 @@ QUnit.test('String.prototype.at()', function(assert) {
   assert.equal('\uD800'.at(0), '\uD800');
   assert.equal('\uDC00'.at(0), '\uDC00');
   assert.equal('\uD800\uDC00'.at(1), '\uDC00');
-});
-
-// ------------------------------------------------------------
-
-QUnit.module("Obsolete/Abandoned");
-
-QUnit.test("Number.compare", function(assert) {
-  // Number.compare
-  assert.ok('compare' in Number);
-  assert.equal(typeof Number.compare, 'function');
-  assert.equal(Number.compare(0, 0), 0);
-  assert.equal(Number.compare(1, 0), 1);
-  assert.equal(Number.compare(0, 1), -1);
-  assert.equal(Number.compare(0, 0, 1), 0);
-  assert.equal(Number.compare(1, 0, 1), 0);
-  assert.equal(Number.compare(0, 1, 1), 0);
-});
-
-QUnit.test("Array.prototype.pushAll", function(assert) {
-  assert.ok('pushAll' in Array.prototype);
-  assert.equal(typeof Array.prototype.pushAll, 'function');
-  var a;
-  a = []; a.pushAll([]); assert.deepEqual(a, []);
-  a = [1,2]; a.pushAll([]); assert.deepEqual(a, [1,2]);
-  a = []; a.pushAll([1,2]); assert.deepEqual(a, [1,2]);
-  a = [1,2]; a.pushAll([1,2]); assert.deepEqual(a, [1,2,1,2]);
-});
-
-QUnit.test("Math: denormalized-to-zero", function(assert) {
-  assert.equal(Math.denormz(0), 0);
-  assert.equal(Math.denormz(-0), -0);
-  assert.equal(Math.denormz(1), 1);
-  assert.equal(Math.denormz(-1), -1);
-  assert.equal(Math.denormz(Math.pow(2,-126)), Math.pow(2,-126));
-  assert.equal(Math.denormz(Math.pow(2,-127)), Math.pow(2,-127));
-  assert.equal(Math.denormz(Math.pow(2,-1022)), Math.pow(2,-1022));
-  assert.equal(Math.denormz(Math.pow(2,-1023)), 0);
-  assert.equal(Math.denormz(Number.MIN_VALUE), 0);
-  assert.equal(Math.denormz(-Math.pow(2,-126)), -Math.pow(2,-126));
-  assert.equal(Math.denormz(-Math.pow(2,-127)), -Math.pow(2,-127));
-  assert.equal(Math.denormz(-Math.pow(2,-1022)), -Math.pow(2,-1022));
-  assert.equal(Math.denormz(-Math.pow(2,-1023)), -0);
-  assert.equal(Math.denormz(-Number.MIN_VALUE), -0);
-
-  assert.equal(Math.fdenormz(0), 0);
-  assert.equal(Math.fdenormz(-0), -0);
-  assert.equal(Math.fdenormz(1), 1);
-  assert.equal(Math.fdenormz(-1), -1);
-  assert.equal(Math.fdenormz(Math.pow(2,-126)), Math.pow(2,-126));
-  assert.equal(Math.fdenormz(Math.pow(2,-127)), 0);
-  assert.equal(Math.fdenormz(Math.pow(2,-1022)), 0);
-  assert.equal(Math.fdenormz(Math.pow(2,-1023)), 0);
-  assert.equal(Math.fdenormz(Number.MIN_VALUE), 0);
-  assert.equal(Math.fdenormz(-Math.pow(2,-126)), -Math.pow(2,-126));
-  assert.equal(Math.fdenormz(-Math.pow(2,-127)), -0);
-  assert.equal(Math.fdenormz(-Math.pow(2,-1022)), -0);
-  assert.equal(Math.fdenormz(-Math.pow(2,-1023)), -0);
-  assert.equal(Math.fdenormz(-Number.MIN_VALUE), -0);
 });

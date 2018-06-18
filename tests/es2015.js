@@ -22,81 +22,7 @@ QUnit.assert.epsilon = function(actual, expected, epsilon) {
                     message: String(actual) + ' ~= ' + String(expected)});
 };
 
-
-(function() {
-  function isNative(t) {
-    return String(eval(t)).indexOf('[native code]') !== -1;
-  }
-  function negate(f) { return function(x) { return !f(x); }; }
-
-  var functions = [
-    'Symbol',
-    'Map',
-    'Set',
-    'WeakMap',
-    'WeakSet',
-    'Promise',
-    'Reflect',
-
-    'ArrayBuffer.isView',
-    'Object.getOwnPropertyNames',
-    'Object.getOwnPropertySymbols',
-    'Object.keys',
-    'Array.from',
-    'Array.of',
-    'Array.prototype.copyWithin',
-    'Array.prototype.entries',
-    'Array.prototype.fill',
-    'Array.prototype.find',
-    'Array.prototype.findIndex',
-    'Array.prototype.keys',
-    'Array.prototype.values',
-    'Math.acosh',
-    'Math.asinh',
-    'Math.atanh',
-    'Math.cbrt',
-    'Math.clz32',
-    'Math.cosh',
-    'Math.expm1',
-    'Math.fround',
-    'Math.hypot',
-    'Math.imul',
-    'Math.log10',
-    'Math.log1p',
-    'Math.log2',
-    'Math.sign',
-    'Math.sinh',
-    'Math.tanh',
-    'Math.trunc',
-    'Number.isFinite',
-    'Number.isInteger',
-    'Number.isNaN',
-    'Number.isSafeInteger',
-    'Number.parseFloat',
-    'Number.parseInt',
-    'Object.assign',
-    'Object.is',
-    'Object.setPrototypeOf',
-    'String.fromCodePoint',
-    'String.raw',
-    'String.prototype.codePointAt',
-    'String.prototype.includes',
-    'String.prototype.endsWith',
-    'String.prototype.repeat',
-    'String.prototype.startsWith'
-  ];
-
-  var nativeFunctions = functions.filter(isNative);
-  var polyfilledFunctions = functions.filter(negate(isNative));
-
-  document.querySelector('#nativeFunctions').appendChild(document.createTextNode(
-            nativeFunctions.join(' ')));
-  document.querySelector('#polyfilledFunctions').appendChild(document.createTextNode(
-            polyfilledFunctions.join(' ')));
-})();
-
-
-QUnit.module("Extras");
+QUnit.module("ES2015: Extras");
 
 QUnit.test("Math", function(assert) {
   var EPSILON = 1e-5;
@@ -722,7 +648,7 @@ QUnit.test("RegExp dispatch", function(assert) {
   assert.deepEqual(calls, ['match', 'replace', 'search', 'split']);
 });
 
-QUnit.module("Symbols");
+QUnit.module("ES2015: Symbols");
 
 QUnit.test("Symbol", function(assert) {
   assert.throws(function() { new Symbol; });
@@ -789,7 +715,7 @@ QUnit.test("Symbol", function(assert) {
   assert.ok(Symbol.split in RegExp.prototype);
 });
 
-QUnit.module("Containers and Iterators");
+QUnit.module("ES2015: Containers and Iterators");
 
 QUnit.test("Map", function(assert) {
   assert.equal(Map.length, 0);
@@ -1087,7 +1013,7 @@ QUnit.test("Branding", function(assert) {
 
 
 
-QUnit.module("Promises");
+QUnit.module("ES2015: Promises");
 QUnit.test("Basics", function(assert) {
   assert.expect(4);
   new Promise(function (resolve, reject) {
@@ -1264,7 +1190,7 @@ QUnit.test("Promise.all() reject", function(assert) {
   });
 });
 
-QUnit.module("Reflection");
+QUnit.module("ES2015: Reflection");
 
 QUnit.test("Reflect", function(assert) {
 
@@ -1331,7 +1257,7 @@ QUnit.test("Reflect", function(assert) {
 
 });
 
-QUnit.module("Regression");
+QUnit.module("ES2015: Regression");
 
 QUnit.test('IE/getOwnPropertyNames error', function(assert) {
   // https://github.com/inexoraletash/polyfill/issues/96

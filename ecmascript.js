@@ -1,6 +1,8 @@
 //----------------------------------------------------------------------
 //
-// ECMAScript 2015 Polyfills
+// ECMAScript 2015+ Polyfills
+//
+// For browsers that only support ES5 and TypedArrays (i.e. IE11).
 //
 //----------------------------------------------------------------------
 
@@ -487,8 +489,6 @@
   // - just use o.p = v or o[p] = v
 
 
-
-
   // 7.3.9 GetMethod (O, P)
   function GetMethod(o, p) {
     var func = GetV(o, p);
@@ -512,6 +512,34 @@
   // 7.3.11 HasOwnProperty (O, P)
   function HasOwnProperty(o, p) {
     return Object.prototype.hasOwnProperty.call(o, p);
+  }
+
+  // 7.3.4
+  function CreateDataProperty(O, P, V) {
+    Object.defineProperty(O, P, {
+      value: V,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    });
+  }
+
+  // 7.3.21
+  function EnumerableOwnProperties(o, kind) {
+    var ownKeys = Object.keys(o);
+    var properties = [];
+    ownKeys.forEach(function(key) {
+      var desc = Object.getOwnPropertyDescriptor(o, key);
+      if (desc && desc.enumerable) {
+        if (kind === 'key') properties.push(key);
+        else {
+          var value = o[key];
+          if (kind === 'value') properties.push(value);
+          else properties.push([key, value]);
+        }
+      }
+    });
+    return properties;
   }
 
   //----------------------------------------
@@ -679,8 +707,38 @@
   // 19.1.2.2 Object.create ( O [ , Properties ] )
   // 19.1.2.3 Object.defineProperties ( O, Properties )
   // 19.1.2.4 Object.defineProperty ( O, P, Attributes )
+
+  // 19.1.2.5 Object.entries
+  define(
+    Object, 'entries',
+    function entries(o) {
+      var obj = ToObject(o);
+      return EnumerableOwnProperties(obj, 'key+value');
+    });
+
+
   // 19.1.2.5 Object.freeze ( O )
   // 19.1.2.6 Object.getOwnPropertyDescriptor ( O, P )
+
+  // 19.1.2.8 Object.getOwnPropertyDescriptors ( O )
+  define(
+    Object, 'getOwnPropertyDescriptors',
+    function getOwnPropertyDescriptors(o) {
+      var obj = ToObject(o);
+      // ReturnIfAbrupt(obj)
+      var keys = Object.getOwnPropertyNames(obj);
+      // ReturnIfAbrupt(keys)
+      var descriptors = {};
+      for (var i = 0; i < keys.length; ++i) {
+        var nextKey = keys[i];
+        var descriptor = Object.getOwnPropertyDescriptor(obj, nextKey);
+        // ReturnIfAbrupt(desc)
+        // ReturnIfAbrupt(descriptor)
+        CreateDataProperty(descriptors, nextKey, descriptor);
+      }
+      return descriptors;
+    });
+
 
   (function() {
     var nativeSymbols = (typeof global.Symbol() === 'symbol'),
@@ -750,6 +808,17 @@
       return o;
     }
   );
+
+
+  // 19.1.2.21 Object.values
+  define(
+    Object, 'values',
+    function values(o) {
+      var obj = ToObject(o);
+      return EnumerableOwnProperties(obj, 'value');
+    });
+
+
 
   // 19.1.3 Properties of the Object Prototype Object
   // 19.1.3.1 Object.prototype.constructor
@@ -1431,6 +1500,57 @@
   // Not practical due to table sizes; if needed, pull in:
   // https://github.com/walling/unorm/
 
+  // 21.1.3.13 String.prototype.padEnd( maxLength [ , fillString ] )
+  define(
+    String.prototype, 'padEnd',
+    function padEnd(maxLength) {
+      var fillString = arguments[1];
+
+      var o = this;
+      // ReturnIfAbrupt(o)
+      var s = String(this);
+      // ReturnIfAbrupt(s)
+      var stringLength = s.length;
+      if (fillString === undefined) var fillStr = '';
+      else fillStr = String(fillString);
+      // ReturnIfAbrupt(fillStr)
+      if (fillStr === '') fillStr = ' ';
+      var intMaxLength = ToLength(maxLength);
+      // ReturnIfAbrupt(intMaxLength)
+      if (intMaxLength <= stringLength) return s;
+      var fillLen = intMaxLength - stringLength;
+      var stringFiller = '';
+      while (stringFiller.length < fillLen)
+        stringFiller = stringFiller + fillStr;
+      return s + stringFiller.substring(0, fillLen);
+    });
+
+  // 21.1.3.14 String.prototype.padStart( maxLength [ , fillString ] )
+  define(
+    String.prototype, 'padStart',
+    function padStart(maxLength) {
+      var fillString = arguments[1];
+
+      var o = this;
+      // ReturnIfAbrupt(o)
+      var s = String(this);
+      // ReturnIfAbrupt(s)
+      var stringLength = s.length;
+      if (fillString === undefined) var fillStr = '';
+      else fillStr = String(fillString);
+      // ReturnIfAbrupt(fillStr)
+      if (fillStr === '') fillStr = ' ';
+      var intMaxLength = ToLength(maxLength);
+      // ReturnIfAbrupt(intMaxLength)
+      if (intMaxLength <= stringLength) return s;
+      var fillLen = intMaxLength - stringLength;
+      var stringFiller = '';
+      while (stringFiller.length < fillLen)
+        stringFiller = stringFiller + fillStr;
+      return stringFiller.substring(0, fillLen) + s;
+    });
+
+
   // 21.1.3.13 String.prototype.repeat ( count )
   define(
     String.prototype, 'repeat',
@@ -1906,6 +2026,33 @@
     });
 
   // 22.1.3.10 Array.prototype.forEach ( callbackfn [ , thisArg ] )
+
+  // Array.prototype.includes
+  define(
+    Array.prototype, 'includes',
+    function includes(target) {
+      var fromIndex = arguments[1];
+
+      var o = ToObject(this);
+      var len = ToLength(o["length"]);
+      if (len === 0) return false;
+      var n = ToInteger(fromIndex);
+      if (n >= 0) {
+        var k = n;
+      } else {
+        k = len + n;
+        if (k < 0) k = 0;
+      }
+      while (k < len) {
+        var elementK = o[k];
+        if (SameValueZero(o[k], target))
+          return true;
+        k += 1;
+      }
+      return false;
+    });
+
+
   // 22.1.3.11 Array.prototype.indexOf ( searchElement [ , fromIndex ] )
   // 22.1.3.12 Array.prototype.join (separator)
 
@@ -3610,6 +3757,17 @@
 
     // Patch early Promise.cast vs. Promise.resolve implementations
     if ('cast' in global.Promise) global.Promise.resolve = global.Promise.cast;
+
+    // https://github.com/tc39/proposal-promise-finally
+    define(
+      Promise.prototype, 'finally',
+      function finally_(func) {
+        return this.then(
+          function(r) { func(); return r; },
+          function(r) { func(); throw r; }
+        );
+      });
+
   }());
 
   // 25.4.5.1 Promise.prototype [ @@toStringTag ]
