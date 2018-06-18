@@ -1206,7 +1206,6 @@ QUnit.test("Reflect", function(assert) {
   assert.equal(args[1], 2, 'Reflect.apply should call with passed args');
 
   assert.equal(Reflect.construct(Date, [1970, 1]).getMonth(), 1);
-  assert.equal(Reflect.enumerate({a:1}).next().value, 'a');
 
   var o = {};
   Object.defineProperty(o, 'p', {configurable: true, writable: true, value: 123});
