@@ -97,57 +97,6 @@
 
   // These are used for implementing the polyfills, but not exported.
 
-  // Inspired by https://gist.github.com/1638059
-  /** @constructor */
-  function EphemeronTable() {
-    var secretKey = ObjectCreate(null);
-
-    function conceal(o) {
-      var oValueOf = o.valueOf, secrets = ObjectCreate(null);
-      Object.defineProperty(o, 'valueOf', {
-          value: (function(secretKey) {
-            return function (k) {
-              return (k === secretKey) ? secrets : oValueOf.apply(o, arguments);
-            };
-          }(secretKey)),
-        configurable: true,
-        writeable: true,
-        enumerable: false
-        });
-      return secrets;
-    }
-
-    function reveal(o) {
-      var v = typeof o.valueOf === 'function' && o.valueOf(secretKey);
-      return v === o ? null : v;
-    }
-
-    return {
-      clear: function() {
-        secretKey = ObjectCreate(null);
-      },
-      remove: function(key) {
-        var secrets = reveal(key);
-        if (secrets && HasOwnProperty(secrets, 'value')) {
-          delete secrets.value;
-          return true;
-        }
-        return false;
-      },
-      get: function(key, defaultValue) {
-        var secrets = reveal(key);
-        return (secrets && HasOwnProperty(secrets, 'value')) ? secrets.value : defaultValue;
-      },
-      has: function(key) {
-        var secrets = reveal(key);
-        return Boolean(secrets && HasOwnProperty(secrets, 'value'));
-      },
-      set: function(key, value) {
-        var secrets = reveal(key) || conceal(key);
-        secrets.value = value;
-      }
-    };
-  }
 
   var empty = Object.create(null);
 
@@ -2898,8 +2847,6 @@
   // ---------------------------------------
 
   (function() {
-    // TODO: Implement in terms of WeakMap.
-
     // 23.4.1 The WeakSet Constructor
     // 23.4.1.1 WeakSet ( [ iterable ] )
     /** @constructor */
@@ -2915,7 +2862,7 @@
         if (!IsCallable(adder)) throw TypeError();
         var iter = GetIterator(ToObject(iterable));
       }
-      set_internal(set, '[[WeakSetData]]', new EphemeronTable);
+      set_internal(set, '[[WeakSetData]]', new WeakMap);
       if (iter === undefined) return set;
       while (true) {
         var next = IteratorStep(iter);
@@ -2958,7 +2905,7 @@
         if (Type(S) !== 'object') throw TypeError();
         if (S['[[WeakSetData]]'] === undefined) throw TypeError();
         if (Type(value) !== 'object') throw TypeError('Expected object');
-        return S['[[WeakSetData]]'].remove(value);
+        return S['[[WeakSetData]]'].delete(value);
       });
 
     // 23.4.3.4 WeakSet.prototype.has ( value )
@@ -2969,7 +2916,7 @@
         if (Type(S) !== 'object') throw TypeError();
         if (S['[[WeakSetData]]'] === undefined) throw TypeError();
         if (Type(key) !== 'object') throw TypeError('Expected object');
-        return S['[[WeakSetData]]'].has(key);
+        return S['[[WeakSetData]]'].get(key) === true;
       });
 
     // 23.4.3.5 WeakSet.prototype [ @@toStringTag ]

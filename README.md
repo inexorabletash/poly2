@@ -77,19 +77,16 @@ See also: [ECMAScript proposed](experimental/es-proposed.md) - Proposals for fut
 ### Indexed Collections
 * Array: `from()`, `of()`
 * Array prototype: `copyWithin()`, `entries()`, `fill()`, `find()`, `findIndex()`, `includes()`, `keys()`, `values()`, `[@@iterator]()`
-* _TypedArray_
 * %TypedArray% prototype: `from()`, `of()`
 * %TypedArray% prototype: `copyWithin()`, `entries()`, `every()`, `fill()`, `filter()`, `find()`, `findIndex()`, `forEach()`, `indexOf()`, `join()`, `keys()`, `lastIndexOf()`, `map()`, `reduce()`, `reduceRight()`, `reverse()`, `slice()`, `some()`, `sort()`, `values()`, `[@@iterator]()`
 
 ### Keyed Collections
 * Map: `clear()`, `delete()`, `entries()`, `forEach()`, `get()`, `keys()`, `has()`, `set()`, `size`, `values()`, `[@@iterator]()`
 * Set: `add()`, `clear()`, `delete()`, `entries()`, `forEach()`, `has()`, `size`, `values()`, `[@@iterator]()`
-* WeakMap: `clear()`, `delete()`, `get()`, `has()`, `set()`
 * WeakSet: `add()`, `clear()`, `delete()`, `has()`
-  * WeakMap and WeakSet are intrusive and modify the `valueOf` property of keys
 
 ### Asynchronous Programming
-* Promise: `Promise.resolve()`, `Promise.reject()`, `Promise.cast()`, `Promise.race()`, `Promise.all()`
+* Promise: `all()`, `race()`,`resolve()`, `reject()`
 * Promise prototype: `catch()`, `finally()`, `then()`
 
 
@@ -103,8 +100,8 @@ See also: [ECMAScript proposed](experimental/es-proposed.md) - Proposals for fut
 
 * [Element](https://dom.spec.whatwg.org/#interface-element): `matches(selectors)`, `closest(selectors)`
 * [DOMTokenList](https://dom.spec.whatwg.org/#interface-domtokenlist): `toggle(token, force)`
-* [ParentNode](https://dom.spec.whatwg.org/#interface-parentnode): `node.prepend(nodes...)`, `node.append(nodes...)`
-* [ChildNode](https://dom.spec.whatwg.org/#interface-childnode): `node.before(nodes...)` , `node.after(nodes...)` , `node.replaceWith(nodes...)` , `node.remove()`
+* [ParentNode](https://dom.spec.whatwg.org/#interface-parentnode): `prepend(nodes...)`, `append(nodes...)`
+* [ChildNode](https://dom.spec.whatwg.org/#interface-childnode): `before(nodes...)` , `after(nodes...)` , `replaceWith(nodes...)` , `remove()`
 * [CustomEvents](https://dom.spec.whatwg.org/#interface-customevent)
 
 ### Fetch
