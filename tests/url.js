@@ -223,6 +223,7 @@ QUnit.test('URLSearchParams', function(assert) {
   assert.equal(String(new URLSearchParams({a: 1})), 'a=1');
   assert.equal(String(new URLSearchParams({a: 1, b: 2})), 'a=1&b=2');
 
+  // TODO: Fails in Edge 17
   assert.equal(String(new URLSearchParams(new URLSearchParams('?'))), '');
   assert.equal(String(new URLSearchParams(new URLSearchParams('?a=1'))), 'a=1');
   assert.equal(String(new URLSearchParams(new URLSearchParams('?a=1&b=1'))), 'a=1&b=1');

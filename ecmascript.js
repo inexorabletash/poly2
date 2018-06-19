@@ -9,10 +9,6 @@
 (function (global) {
   "use strict";
 
-  // Set this to always override native implementations, for testing
-  // the polyfill in browsers with partial/full ES2015 support.
-  var OVERRIDE_NATIVE_FOR_TESTING = false;
-
   var undefined = (void 0); // Paranoia
 
   // Helpers
@@ -44,7 +40,7 @@
   }(global['Promise'], global['setImmediate']));
 
   function define(o, p, v, override) {
-    if (p in o && !override && !OVERRIDE_NATIVE_FOR_TESTING)
+    if (p in o && !override)
       return;
 
     if (typeof v === 'function') {
@@ -202,7 +198,7 @@
       return this;
     }
 
-    if (!('Symbol' in global) || OVERRIDE_NATIVE_FOR_TESTING)
+    if (!('Symbol' in global))
       global.Symbol = Symbol;
 
     // 19.4.2 Properties of the Symbol Constructor
@@ -845,13 +841,14 @@
   // 19.1.3.6 Object.prototype.toString ( )
   var o_p_ts = Object.prototype.toString;
   define(Object.prototype, 'toString',
-       function() {
-         var o = strict(this);
-         if (o === Object(o) && $$toStringTag in o) {
-           return '[object ' + o[$$toStringTag] + ']';
-         }
-         return o_p_ts.apply(o, arguments);
-       });
+         function() {
+           var o = strict(this);
+           if (o === Object(o) && $$toStringTag in o) {
+             return '[object ' + o[$$toStringTag] + ']';
+           }
+           return o_p_ts.apply(o, arguments);
+         },
+         typeof $$toStringTag !== 'symbol');
 
   // 19.1.3.7 Object.prototype.valueOf ( )
   // 19.1.4 Properties of Object Instances
@@ -2388,7 +2385,7 @@
       return map;
     }
 
-    if (!('Map' in global) || OVERRIDE_NATIVE_FOR_TESTING ||
+    if (!('Map' in global) ||
         (function() { try { new global.Map([]); return false; } catch (_) { return true; } }()) ||
         (function() { try { return !new global.Map().entries().next; } catch (_) { return true; } }()) ||
         (new global.Map([['a', 1]]).size !== 1))
@@ -2657,7 +2654,7 @@
       return set;
     }
 
-    if (!('Set' in global) || OVERRIDE_NATIVE_FOR_TESTING ||
+    if (!('Set' in global) ||
         (function() { try { return !new global.Set().entries().next; } catch (_) { return true; } }()) ||
         (new global.Set([1]).size !== 1))
       global.Set = Set;
@@ -2869,116 +2866,40 @@
   // 23.3 WeakMap Objects
   // ---------------------------------------
 
+  // 23.3.1 The WeakMap Constructor
+  // 23.3.1.1 WeakMap ( [ iterable ] )
+  // 23.3.2 Properties of the WeakMap Constructor
+  // 23.3.2.1 WeakMap.prototype
+  // 23.3.3 Properties of the WeakMap Prototype Object
+  // 23.3.3.1 WeakMap.prototype.constructor
+  // 23.3.3.2 WeakMap.prototype.delete ( key )
+  // 23.3.3.3 WeakMap.prototype.get ( key )
+  // 23.3.3.4 WeakMap.prototype.has ( key )
+
+  // 23.3.3.5 WeakMap.prototype.set ( key, value )
+  // Patch to return self.
   (function() {
-    // 23.3.1 The WeakMap Constructor
-    // 23.3.1.1 WeakMap ( [ iterable ] )
-    /** @constructor */
-    function WeakMap(/*iterable*/) {
-      var map = strict(this);
-      var iterable = arguments[0];
-
-      if (Type(map) !== 'object') throw TypeError();
-      if ('[[WeakMapData]]' in map) throw TypeError();
-
-      if (iterable !== undefined) {
-        var adder = map['set'];
-        if (!IsCallable(adder)) throw TypeError();
-        var iter = GetIterator(ToObject(iterable));
-      }
-      set_internal(map, '[[WeakMapData]]', new EphemeronTable);
-      if (iter === undefined) return map;
-      while (true) {
-        var next = IteratorStep(iter);
-        if (next === false)
-          return map;
-        var nextValue = IteratorValue(next);
-        if (Type(nextValue) !== 'object') throw TypeError();
-        var k = nextValue[0];
-        var v = nextValue[1];
-        adder.call(map, k, v);
-      }
-
-      return map;
-    }
-
-    if (!('WeakMap' in global) || OVERRIDE_NATIVE_FOR_TESTING)
-      global.WeakMap = WeakMap;
-
-    // 23.3.2 Properties of the WeakMap Constructor
-    // 23.3.2.1 WeakMap.prototype
-    var $WeakMapPrototype$ = {};
-    WeakMap.prototype = $WeakMapPrototype$;
-
-    // 23.3.3 Properties of the WeakMap Prototype Object
-
-    // 23.3.3.1 WeakMap.prototype.constructor
-
-    // 23.3.3.2 WeakMap.prototype.delete ( key )
-    define(
-      WeakMap.prototype, 'delete',
-      function delete_(key) {
-        var M = strict(this);
-        if (Type(M) !== 'object') throw TypeError();
-        if (M['[[WeakMapData]]'] === undefined) throw TypeError();
-        if (Type(key) !== 'object') throw TypeError('Expected object');
-        return M['[[WeakMapData]]'].remove(key);
-      });
-
-    // 23.3.3.3 WeakMap.prototype.get ( key )
-    define(
-      WeakMap.prototype, 'get',
-      function get(key, defaultValue) {
-        var M = strict(this);
-        if (Type(M) !== 'object') throw TypeError();
-        if (M['[[WeakMapData]]'] === undefined) throw TypeError();
-        if (Type(key) !== 'object') throw TypeError('Expected object');
-        return M['[[WeakMapData]]'].get(key, defaultValue);
-      });
-
-    // 23.3.3.4 WeakMap.prototype.has ( key )
-    define(
-      WeakMap.prototype, 'has',
-      function has(key) {
-        var M = strict(this);
-        if (Type(M) !== 'object') throw TypeError();
-        if (M['[[WeakMapData]]'] === undefined) throw TypeError();
-        if (Type(key) !== 'object') throw TypeError('Expected object');
-        return M['[[WeakMapData]]'].has(key);
-      });
-
-    // 23.3.3.5 WeakMap.prototype.set ( key, value )
-    define(
-      WeakMap.prototype, 'set',
-      function set(key, value) {
-        var M = strict(this);
-        if (Type(M) !== 'object') throw TypeError();
-        if (M['[[WeakMapData]]'] === undefined) throw TypeError();
-        if (Type(key) !== 'object') throw TypeError('Expected object');
-        M['[[WeakMapData]]'].set(key, value);
-        return M;
-      });
-
-    // 23.3.3.6 WeakMap.prototype [ @@toStringTag ]
-    define(global.WeakMap.prototype, $$toStringTag, 'WeakMap');
-
-    // 23.3.4 Properties of WeakMap Instances
-
-    // Polyfills for incomplete native implementations:
-    (function() {
-      var wm = new global.WeakMap();
-      var orig = global.WeakMap.prototype.set;
-      define(global.WeakMap.prototype, 'set', function set() {
-        orig.apply(this, arguments);
-        return this;
-      }, wm.set({}, 0) !== wm);
-    }());
+    var wm = new global.WeakMap();
+    var orig = global.WeakMap.prototype.set;
+    define(global.WeakMap.prototype, 'set', function set() {
+      orig.apply(this, arguments);
+      return this;
+    }, wm.set({}, 0) !== wm);
   }());
+
+  // 23.3.3.6 WeakMap.prototype [ @@toStringTag ]
+  define(WeakMap.prototype, $$toStringTag, 'WeakMap');
+
+  // 23.3.4 Properties of WeakMap Instances
+
 
   // ---------------------------------------
   // 23.4 WeakSet Objects
   // ---------------------------------------
 
   (function() {
+    // TODO: Implement in terms of WeakMap.
+
     // 23.4.1 The WeakSet Constructor
     // 23.4.1.1 WeakSet ( [ iterable ] )
     /** @constructor */
@@ -3007,7 +2928,7 @@
       return set;
     }
 
-    if (!('WeakSet' in global) || OVERRIDE_NATIVE_FOR_TESTING)
+    if (!('WeakSet' in global))
       global.WeakSet = WeakSet;
 
     // 23.4.2 Properties of the WeakSet Constructor
@@ -3618,7 +3539,7 @@
 
     // 25.6.6 Properties of Promise Instances
 
-    if (!('Promise' in global) || OVERRIDE_NATIVE_FOR_TESTING)
+    if (!('Promise' in global))
       global.Promise = Promise;
 
     // Patch early Promise.cast vs. Promise.resolve implementations
@@ -3645,7 +3566,7 @@
 
   (function() {
     // 26.1 The Reflect Object
-    if (!('Reflect' in global) || OVERRIDE_NATIVE_FOR_TESTING)
+    if (!('Reflect' in global))
       global.Reflect = {};
 
     // 26.1.1 Reflect.apply ( target, thisArgument, argumentsList )
@@ -3748,6 +3669,8 @@
         try {
           if (desc && 'set' in desc)
             Function.prototype.call.call(desc['set'], receiver, value);
+          else if (desc && !desc.writable)
+            return false;
           else
             target[name] = value;
           return true;

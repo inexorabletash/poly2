@@ -1,5 +1,7 @@
 /*global QUnit*/
 
+QUnit.module('ECMAScript 5');
+
 QUnit.test("Object constructor properties", function(assert) {
   assert.equal(Object.getPrototypeOf([]), Array.prototype);
   assert.equal(Object.getPrototypeOf({}), Object.prototype);

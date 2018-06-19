@@ -28,25 +28,40 @@
 
 
   // DOMTokenList
-  // Add second argument to native DOMTokenList.toggle() if necessary
   // https://dom.spec.whatwg.org/#dom-domtokenlist-toggle
   (function() {
     if (!('DOMTokenList' in global)) return;
     var e = document.createElement('span');
     if (!('classList' in e)) return;
+
+    // Patch toggle() to support 'force' argument.
     e.classList.toggle('x', false);
-    if (!e.classList.contains('x')) return;
-    global.DOMTokenList.prototype.toggle = function toggle(token/*, force*/) {
-      var force = arguments[1];
-      if (force === undefined) {
-        var add = !this.contains(token);
-        this[add ? 'add' : 'remove'](token);
-        return add;
-      }
-      force = !!force;
-      this[force ? 'add' : 'remove'](token);
-      return force;
-    };
+    if (e.classList.contains('x')) {
+      global.DOMTokenList.prototype.toggle = function toggle(token/*, force*/) {
+        var force = arguments[1];
+        if (force === undefined) {
+          var add = !this.contains(token);
+          this[add ? 'add' : 'remove'](token);
+          return add;
+        }
+        force = !!force;
+        this[force ? 'add' : 'remove'](token);
+        return force;
+      };
+    }
+
+    // Patch contains() to ignore invalid tokens.
+    try {
+      e.classList.contains('');
+      e.classList.contains('a b');
+    } catch (_) {
+      var orig = global.DOMTokenList.prototype.contains;
+      global.DOMTokenList.prototype.contains = function contains(token) {
+        if (token === '' || token.indexOf(' ') !== -1)
+          return false;
+        return orig.apply(this, arguments);
+      };
+    }
   }());
 
   // Element.matches(selectors)
