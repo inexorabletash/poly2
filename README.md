@@ -8,17 +8,16 @@ time.
 
 This is a fork of my previous
 [polyfill collection](https://github.com/inexorabletash/polyfill)
-because I no longer need to support older versions of IE (prior to IE
-11). Older versions of IE are not supported.
+because I no longer need to support versions of IE prior to IE 11.
 
 All polyfills assume ECMAScript 5 support plus native TypedArrays
-(IE11 or newer browsers).
+and WeakMap (IE11 or newer browsers).
 
 ### Getting the Code
 
 You're already here! Great, just download it, or use:
 
-[git](https://git-scm.com/): `git clone https://github.com/inexorabletash/polyfill.git`
+[git](https://git-scm.com/): `git clone https://github.com/inexorabletash/poly2.git`
 
 _What about NPM or other package management systems?_
 
@@ -26,8 +25,7 @@ Nope. Not interested. Too much work for no personal benefit since I don't use th
 
 ### Files
 
-The polyfills are roughly split up into files matching 1:1 with Web
-standards (specifications, living standards documents, etc). So there
+The polyfills are split up into files matching 1:1 with specifications. So there
 is [dom.js](dom.js) for [DOM](https://dom.spec.whatwg.org), etc.
 
 Since I generally use several in my hobby projects, a bundled/minified
@@ -49,10 +47,10 @@ Minification is done via https://github.com/mishoo/UglifyJS2
 
 ## Main Polyfills
 
-## ECMAScript / JavaScript Polyfills
+## ECMAScript (JavaScript)
 
 [script](ecmascript.js) -
-[tests](https://inexorabletash.github.io/polyfill/tests/ecmascript.html)
+[tests](https://inexorabletash.github.io/poly2/tests/ecmascript.html) -
 [standard](http://www.ecma-international.org/ecma-262/)
 
 See also: [ECMAScript proposed](experimental/es-proposed.md) - Proposals for future editions of the standard. Here there be dragons.
@@ -64,7 +62,7 @@ See also: [ECMAScript proposed](experimental/es-proposed.md) - Proposals for fut
 * Not supported: `Function.prototype.toMethod()`
 
 ### Numbers and Dates
-* Number: `EPILON`, `isFinite()`, `isInteger()`, `isNaN()`, `isSafeInteger()`, `MAX_SAFE_INTEGER`, `MIN_SAFE_INTEGER`, `parseFloat()`, `parseInt()`
+* Number: `EPSILON`, `isFinite()`, `isInteger()`, `isNaN()`, `isSafeInteger()`, `MAX_SAFE_INTEGER`, `MIN_SAFE_INTEGER`, `parseFloat()`, `parseInt()`
 * Math: `acosh()`, `asinh()`, `atanh()`, `cbrt()`, `clz32()`, `cosh()`, `expm1()`, `fround`, `hypot()`, `imul()`, `log1p()`, `log10()`, `log2()`, `sign()`, `sinh()`, `tanh()`, `trunc()`
 
 ### Text Processing
@@ -90,12 +88,12 @@ See also: [ECMAScript proposed](experimental/es-proposed.md) - Proposals for fut
 * Promise prototype: `catch()`, `finally()`, `then()`
 
 
-## Web Polyfills
+## Web
 
 ### DOM
 
 [script](dom.js) -
-[tests](https://inexorabletash.github.io/polyfill/tests/dom.html) -
+[tests](https://inexorabletash.github.io/poly2/tests/dom.html) -
 [living standard](https://dom.spec.whatwg.org)
 
 * [Element](https://dom.spec.whatwg.org/#interface-element): `matches(selectors)`, `closest(selectors)`
@@ -107,7 +105,7 @@ See also: [ECMAScript proposed](experimental/es-proposed.md) - Proposals for fut
 ### Fetch
 
 [script](fetch.js) -
-[tests](https://inexorabletash.github.io/polyfill/tests/fetch.html) -
+[tests](https://inexorabletash.github.io/poly2/tests/fetch.html) -
 [living standard](https://fetch.spec.whatwg.org)
 
 Example:
@@ -128,7 +126,7 @@ Supported:
 ### URL API
 
 [script](url.js) -
-[tests](https://inexorabletash.github.io/polyfill/tests/url.html) -
+[tests](https://inexorabletash.github.io/poly2/tests/url.html) -
 [living standard](https://url.spec.whatwg.org/)
 
 ```javascript
@@ -152,9 +150,7 @@ The following are of limited use and are *not* included in the `polyfill.js` bun
 ### Keyboard Events
 
 [script](keyboard.js) -
-[demo page](https://inexorabletash.github.io/polyfill/demos/keyboard.html) -
+[demo page](https://inexorabletash.github.io/poly2/demos/keyboard.html) -
 [draft spec](https://w3c.github.io/uievents/)
 
-KeyboardEvent: `code`, `key`, `location`
-
-[more details](keyboard.md)
+* KeyboardEvent: `code`, `key`, `location`
